@@ -70,8 +70,6 @@
     <div class="info" id="direction"></div>
     <div class="output" id="result"></div>
 
-    <div class="note">
-        Unknown words are shown in [brackets].
     </div>
 </div>
 
@@ -125,7 +123,7 @@ function translateWithPhrases(words, dict) {
         }
 
         if (!matched) {
-            result.push("[" + words[i] + "]");
+            result.push(words[i]);
             i++;
         }
     }
@@ -158,7 +156,7 @@ function translateText() {
     }
 
     document.getElementById("direction").innerText = direction;
-    document.getElementById("result").innerText = "→ " + output;
+    document.getElementById("result").innerText = output;
 }
 </script>
 
