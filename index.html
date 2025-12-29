@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Jamalese Translator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        padding: 30px;
+    }
+    .box {
+        max-width: 600px;
+        background: white;
+        padding: 20px;
+        margin: auto;
+        border-radius: 8px;
+    }
+    textarea {
+        width: 100%;
+        height: 100px;
+        font-size: 16px;
+    }
+    button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .output {
+        margin-top: 15px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Jamalese Translator</h2>
+    <p>Auto-detects Jamalese ↔ English</p>
+
+    <textarea id="input" placeholder="Type here..."></textarea>
+    <br>
+    <button onclick="translate()">Translate</button>
+
+    <div class="output" id="direction"></div>
+    <div class="output" id="result"></div>
+</div>
+
+<script>
+/* -------- Dictionaries -------- */
+
+// Jamalese → English
+const jamToEng = {
+    "hai": "hi",
+    "wœ": "you",
+    "fiind": "friend",
+    "gœdimorgin": "good morning",
+    "mathi narizbikkolim": "prestigious mathematical olympiad",
+    "siiz": "science",
+    "liik": "like"
+};
+
+// English → Jamalese
+const engToJam = {
+    "hi": ["hai"],
+    "you": ["wœ"],
+    "friend": ["fiind"],
+    "good morning": ["gœdimorgin"],
+    "prestigious mathematical olympiad": ["mathi narizbikkolim"],
+    "science": ["siiz"],
+    "like": ["liik"]
+};
+
+/* -------- Logic -------- */
+
+function detectLanguage(words) {
+    let jam = 0, eng = 0;
+    words.forEach(w => {
+        if (jamToEng[w]) jam++;
+        if (engToJam[w]) eng++;
+    });
+    return jam >= eng ? "jamalese" : "english";
+}
+
+function translateText(words, dict) {
+    let result = [];
+    let maxLen = Math.max(...Object.keys(dict).map(k => k.split(" ").length));
+    let i = 0;
+
+    while (i < words.length) {
+        let matched = false;
+
+        for (let size = Math.min(maxLen, words.length - i); size > 0; size--) {
+            let chunk = words.slice(i, i + size).join(" ");
+            if (dict[chunk]) {
+                let val = dict[chunk];
+                if (Array.isArray(val)) val = val[0];
+                result.push(val);
+                i += size;
+                matched = true;
+                break;
+            }
+        }
+
+        if (!matched) {
+            result.push("[" + words[i] + "]");
+            i++;
+        }
+    }
+    return result.join(" ");
+}
+
+function translate() {
+    const input = document.getElementById("input").value.toLowerCase().trim();
+    const words = input.split(/\s+/);
+
+    const lang = detectLanguage(words);
+
+    let output, direction;
+    if (lang === "jamalese") {
+        output = translateText(words, jamToEng);
+        direction = "Jamalese → English";
+    } else {
+        output = translateText(words, engToJam);
+        direction = "English → Jamalese";
+    }
+
+    document.getElementById("direction").innerText = direction;
+    document.getElementById("result").innerText = "→ " + output;
+}
+</script>
+
+</body>
+</html>
