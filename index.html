@@ -6,28 +6,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ---------- Global ---------- */
+/* ---------- Reset ---------- */
 * {
     box-sizing: border-box;
 }
 
+/* ---------- Theme Variables ---------- */
 :root {
-    --bg: #0b0e1a;
-    --card: #151a33;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --text: #111;
+    --muted: #555;
+    --accent: #4b5cff;
+    --border: #d6d9ee;
+    --input: #ffffff;
+}
+
+[data-theme="dark"] {
+    --bg: radial-gradient(circle at top, #121633, #070914);
+    --card: linear-gradient(145deg, #151a33, #10142b);
     --text: #f1f3ff;
     --muted: #aab;
     --accent: #7c8cff;
     --border: #2b2f55;
+    --input: #0e1228;
 }
 
+/* ---------- Base ---------- */
 body {
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: radial-gradient(circle at top, #121633, #070914);
+    background: var(--bg);
     color: var(--text);
+    transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* ---------- Layout ---------- */
 .container {
     max-width: 1100px;
     margin: 60px auto;
@@ -35,10 +48,11 @@ body {
 }
 
 .card {
-    background: linear-gradient(145deg, #151a33, #10142b);
+    background: var(--card);
     border-radius: 20px;
     padding: 28px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+    transition: background 0.4s ease;
 }
 
 /* ---------- Header ---------- */
@@ -54,7 +68,7 @@ h1 {
     font-size: 28px;
 }
 
-/* ---------- Dark Toggle ---------- */
+/* ---------- Dark Mode Toggle ---------- */
 .toggle-wrap {
     display: flex;
     align-items: center;
@@ -75,8 +89,9 @@ h1 {
 .slider {
     position: absolute;
     inset: 0;
-    background: #444;
+    background: #999;
     border-radius: 26px;
+    transition: background 0.3s;
 }
 
 .slider::before {
@@ -88,7 +103,7 @@ h1 {
     bottom: 3px;
     background: white;
     border-radius: 50%;
-    transition: 0.3s;
+    transition: transform 0.3s;
 }
 
 input:checked + .slider {
@@ -108,12 +123,13 @@ select {
     padding: 8px 14px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: var(--card);
+    background: var(--input);
     color: var(--text);
     font-size: 14px;
+    transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* ---------- Two Pane System (FIXED) ---------- */
+/* ---------- Panes ---------- */
 .panes {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -123,7 +139,7 @@ select {
 .pane {
     display: flex;
     flex-direction: column;
-    height: 260px; /* 🔑 hard sync height */
+    height: 260px;
 }
 
 textarea {
@@ -132,10 +148,11 @@ textarea {
     font-size: 16px;
     border-radius: 14px;
     border: 1px solid var(--border);
-    background: #0e1228;
+    background: var(--input);
     color: var(--text);
-    resize: none;              /* 🔑 disable resizing */
+    resize: none;
     outline: none;
+    transition: background 0.4s ease, color 0.4s ease;
 }
 
 .output-box {
@@ -146,25 +163,27 @@ textarea {
     font-size: 18px;
     overflow-y: auto;
     word-break: break-word;
+    transition: background 0.4s ease, color 0.4s ease;
 }
 
 .direction {
-    font-weight: bold;
-    margin-bottom: 8px;
     font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 6px;
     color: var(--muted);
 }
 
-/* ---------- Copy Button ---------- */
+/* ---------- Copy ---------- */
 .copy-btn {
     margin-top: 10px;
     padding: 8px 14px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: #0e1228;
+    background: var(--input);
     color: var(--text);
     cursor: pointer;
     align-self: flex-start;
+    transition: background 0.3s;
 }
 
 /* ---------- Footer ---------- */
@@ -198,6 +217,7 @@ textarea {
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -208,7 +228,7 @@ textarea {
     <div class="toggle-wrap">
         🌞
         <label class="switch">
-            <input type="checkbox" id="darkToggle" checked>
+            <input type="checkbox" id="darkToggle">
             <span class="slider"></span>
         </label>
         🌙
@@ -218,8 +238,8 @@ textarea {
 <div class="controls">
     <select id="mode">
         <option value="auto">Auto-detect</option>
-        <option value="jam-en">Jamalese → English</option>
-        <option value="en-jam">English → Jamalese</option>
+        <option value="jam-en">Zamœlis → English</option>
+        <option value="en-jam">English → Zamœlis</option>
     </select>
 </div>
 
@@ -240,82 +260,100 @@ textarea {
 <div class="footer">
     <span>
         View the full dictionary at
-        <a href="https://newhs.cc/dict" target="_blank">https://newhs.cc/dict</a>
+        <a href="https://newhs.cc/dict" target="_blank">newhs.cc/dict</a>
     </span>
     <span>
-        Jamalese Translator v1.0 • Created by
-        <a href="https://github.com/nadfd" target="_blank"><b>nadfd</b></a>
+        Created by
+        <a href="https://github.com/nadfd" target="_blank">nadfd</a>
     </span>
 </div>
 
 </div>
 </div>
 
-<script src="jamToEng.js"></script>
-<script src="engToJam.js"></script>
+<!-- Dictionary -->
+<script src="https://newhs.cc/words.js?v=latest"></script>
 
 <script>
+/* ---------- Build Dictionaries ---------- */
+const engToJam = {};
+const jamToEng = {};
+
+for (const [jam, engRaw] of dictionary) {
+    const parts = engRaw.split(",");
+    const clean = [];
+
+    for (let p of parts) {
+        p = p.replace(/\s*\(.*?\)\s*/g, "").trim().toLowerCase();
+        if (!p) continue;
+
+        if (!engToJam[p]) engToJam[p] = [];
+        if (!engToJam[p].includes(jam)) engToJam[p].push(jam);
+        clean.push(p);
+    }
+    jamToEng[jam] = [...new Set(clean)];
+}
+
 /* ---------- Dark Mode ---------- */
 const toggle = document.getElementById("darkToggle");
-toggle.checked = localStorage.getItem("dark") !== "false";
+const saved = localStorage.getItem("dark");
 
-function applyDark() {
-    document.body.style.background = toggle.checked
-        ? "radial-gradient(circle at top, #121633, #070914)"
-        : "#f4f6fb";
-    localStorage.setItem("dark", toggle.checked);
+if (saved === null || saved === "true") {
+    document.documentElement.dataset.theme = "dark";
+    toggle.checked = true;
+} else {
+    document.documentElement.dataset.theme = "light";
 }
-toggle.addEventListener("change", applyDark);
-applyDark();
+
+toggle.addEventListener("change", () => {
+    document.documentElement.dataset.theme = toggle.checked ? "dark" : "light";
+    localStorage.setItem("dark", toggle.checked);
+});
 
 /* ---------- Translation ---------- */
-function tokenize(text) {
-    return text.toLowerCase().trim().split(/\s+/);
+function tokenize(t) {
+    return t.toLowerCase().trim().split(/\s+/);
 }
 
-function detectLanguage(words) {
-    let jam = 0, eng = 0;
+function detect(words) {
+    let j = 0, e = 0;
     words.forEach(w => {
-        if (jamToEng[w]) jam++;
-        if (engToJam[w]) eng++;
+        if (jamToEng[w]) j++;
+        if (engToJam[w]) e++;
     });
-    return jam >= eng ? "jam" : "eng";
+    return j >= e ? "jam" : "eng";
 }
 
-function translateWithPhrases(words, dict) {
-    const result = [];
+function translate(words, dict) {
+    const out = [];
     const keys = Object.keys(dict);
     const maxLen = Math.max(...keys.map(k => k.split(" ").length));
     let i = 0;
 
     while (i < words.length) {
-        let matched = false;
-        for (let size = Math.min(maxLen, words.length - i); size > 0; size--) {
-            const chunk = words.slice(i, i + size).join(" ");
+        let found = false;
+        for (let len = Math.min(maxLen, words.length - i); len > 0; len--) {
+            const chunk = words.slice(i, i + len).join(" ");
             if (dict[chunk]) {
-                let val = dict[chunk];
-                if (Array.isArray(val)) val = val[0];
-                result.push(val);
-                i += size;
-                matched = true;
+                out.push(Array.isArray(dict[chunk]) ? dict[chunk][0] : dict[chunk]);
+                i += len;
+                found = true;
                 break;
             }
         }
-        if (!matched) {
-            result.push(words[i]);
+        if (!found) {
+            out.push(words[i]);
             i++;
         }
     }
-    return result.join(" ");
+    return out.join(" ");
 }
 
-function translateText() {
-    const text = document.getElementById("input").value;
-    const result = document.getElementById("result");
-    const dir = document.getElementById("direction");
+function update() {
+    const text = input.value;
     if (!text.trim()) {
         result.textContent = "";
-        dir.textContent = "";
+        direction.textContent = "";
         return;
     }
 
@@ -323,30 +361,26 @@ function translateText() {
     const mode = document.getElementById("mode").value;
 
     if (mode === "auto") {
-        const d = detectLanguage(words);
-        if (d === "jam") {
-            result.textContent = translateWithPhrases(words, jamToEng);
-            dir.textContent = "Jamalese → English (auto)";
-        } else {
-            result.textContent = translateWithPhrases(words, engToJam);
-            dir.textContent = "English → Jamalese (auto)";
-        }
-    } else if (mode === "jam-en") {
-        result.textContent = translateWithPhrases(words, jamToEng);
-        dir.textContent = "Jamalese → English";
+        const d = detect(words);
+        direction.textContent = d === "jam"
+            ? "Jamalese → English (auto)"
+            : "English → Jamalese (auto)";
+        result.textContent = translate(words, d === "jam" ? jamToEng : engToJam);
     } else {
-        result.textContent = translateWithPhrases(words, engToJam);
-        dir.textContent = "English → Jamalese";
+        direction.textContent =
+            mode === "jam-en" ? "Jamalese → English" : "English → Jamalese";
+        result.textContent = translate(words, mode === "jam-en" ? jamToEng : engToJam);
     }
 }
 
-document.getElementById("input").addEventListener("input", translateText);
-document.getElementById("mode").addEventListener("change", translateText);
+input.addEventListener("input", update);
+mode.addEventListener("change", update);
 
 /* ---------- Copy ---------- */
 function copyResult() {
-    const t = document.getElementById("result").innerText;
-    if (t) navigator.clipboard.writeText(t);
+    if (result.innerText) {
+        navigator.clipboard.writeText(result.innerText);
+    }
 }
 </script>
 
