@@ -107,7 +107,6 @@ h1 {
     inset: 0;
     background-color: #999;
     border-radius: 26px;
-    transition: background-color 0.3s;
 }
 
 .slider::before {
@@ -141,7 +140,6 @@ select {
     border: 1px solid var(--border);
     background-color: var(--input);
     color: var(--text);
-    font-size: 14px;
 }
 
 /* ---------- Panes ---------- */
@@ -152,9 +150,10 @@ select {
 }
 
 .pane {
+    position: relative;
     display: flex;
     flex-direction: column;
-    height: 260px;
+    height: 300px; /* ⬅ increased height */
 }
 
 textarea {
@@ -166,17 +165,17 @@ textarea {
     background-color: var(--input);
     color: var(--text);
     resize: none;
-    outline: none;
 }
 
+/* ---------- Output ---------- */
 .output-box {
     flex: 1;
     padding: 14px;
+    padding-bottom: 54px; /* ⬅ space for icon */
     border-radius: 14px;
     background-color: rgba(0,0,0,0.04);
     font-size: 18px;
     overflow-y: auto;
-    word-break: break-word;
 }
 
 [data-theme="dark"] .output-box {
@@ -190,15 +189,22 @@ textarea {
     color: var(--muted);
 }
 
-/* ---------- Copy Button ---------- */
+/* ---------- Copy Button (ICON) ---------- */
 .copy-btn {
-    margin-top: 10px;
-    padding: 8px 14px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 38px;
+    height: 38px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background-color: var(--input);
     color: var(--text);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
 }
 
 /* ---------- Footer ---------- */
@@ -227,7 +233,7 @@ textarea {
     }
 
     .pane {
-        height: 220px;
+        height: 260px;
     }
 }
 </style>
@@ -268,7 +274,7 @@ textarea {
             <div class="direction" id="direction"></div>
             <div id="result"></div>
         </div>
-        <button class="copy-btn" onclick="copyResult()">📋 Copy translation</button>
+        <button class="copy-btn" onclick="copyResult()" title="Copy">📋</button>
     </div>
 </div>
 
@@ -286,7 +292,6 @@ textarea {
 </div>
 </div>
 
-<!-- Dictionary -->
 <script src="https://newhs.cc/words.js?v=latest"></script>
 
 <script>
@@ -313,12 +318,9 @@ for (const [jam, engRaw] of dictionary) {
 const toggle = document.getElementById("darkToggle");
 const saved = localStorage.getItem("dark");
 
-if (saved === null || saved === "true") {
-    document.documentElement.dataset.theme = "dark";
-    toggle.checked = true;
-} else {
-    document.documentElement.dataset.theme = "light";
-}
+document.documentElement.dataset.theme =
+    saved === null || saved === "true" ? "dark" : "light";
+toggle.checked = document.documentElement.dataset.theme === "dark";
 
 toggle.addEventListener("change", () => {
     document.documentElement.dataset.theme = toggle.checked ? "dark" : "light";
@@ -365,14 +367,13 @@ function translate(words, dict) {
 }
 
 function update() {
-    const text = input.value;
-    if (!text.trim()) {
+    if (!input.value.trim()) {
         result.textContent = "";
         direction.textContent = "";
         return;
     }
 
-    const words = tokenize(text);
+    const words = tokenize(input.value);
     const mode = modeSelect.value;
 
     if (mode === "auto") {
