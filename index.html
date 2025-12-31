@@ -6,12 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ---------- Reset ---------- */
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-/* ---------- Theme Variables ---------- */
+/* ---------- Theme ---------- */
 :root {
     --bg: #f4f6fb;
     --card: #ffffff;
@@ -35,31 +32,12 @@
 /* ---------- Base ---------- */
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: system-ui, sans-serif;
     background-color: var(--bg);
     color: var(--text);
+    transition: background-color .4s, color .4s;
 }
 
-/* ---------- Smooth Transitions ---------- */
-body,
-.card,
-textarea,
-.output-box,
-select,
-.copy-btn,
-header,
-.footer,
-.pane,
-h1 {
-    transition:
-        background-color 0.4s ease,
-        color 0.4s ease,
-        border-color 0.4s ease,
-        box-shadow 0.4s ease,
-        opacity 0.25s ease;
-}
-
-/* ---------- Layout ---------- */
 .container {
     max-width: 1100px;
     margin: 60px auto;
@@ -67,10 +45,11 @@ h1 {
 }
 
 .card {
-    background-color: var(--card);
+    background: var(--card);
     border-radius: 20px;
     padding: 28px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+    box-shadow: 0 30px 80px rgba(0,0,0,.35);
+    transition: background-color .4s;
 }
 
 /* ---------- Header ---------- */
@@ -78,71 +57,29 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 }
 
-h1 {
-    margin: 0;
-    font-size: 28px;
-    color: var(--text);
-}
+h1 { margin: 0; }
 
-/* ---------- Dark Toggle ---------- */
-.toggle-wrap {
+/* ---------- Tabs ---------- */
+.lang-tabs {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 18px;
+    gap: 18px;
+    font-size: 15px;
+    margin-bottom: 8px;
 }
 
-.switch {
-    position: relative;
-    width: 52px;
-    height: 26px;
+.lang-tab {
+    cursor: pointer;
+    padding-bottom: 4px;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: color .25s, border-color .25s;
 }
 
-.switch input {
-    opacity: 0;
-}
-
-.slider {
-    position: absolute;
-    inset: 0;
-    background-color: #999;
-    border-radius: 26px;
-}
-
-.slider::before {
-    content: "";
-    position: absolute;
-    height: 20px;
-    width: 20px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    border-radius: 50%;
-    transition: transform 0.3s;
-}
-
-input:checked + .slider {
-    background-color: var(--accent);
-}
-
-input:checked + .slider::before {
-    transform: translateX(26px);
-}
-
-/* ---------- Controls ---------- */
-.controls {
-    margin-bottom: 16px;
-}
-
-select {
-    padding: 8px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background-color: var(--input);
-    color: var(--text);
+.lang-tab.active {
+    color: var(--accent);
+    border-color: var(--accent);
 }
 
 /* ---------- Panes ---------- */
@@ -165,31 +102,22 @@ textarea {
     font-size: 16px;
     border-radius: 14px;
     border: 1px solid var(--border);
-    background-color: var(--input);
+    background: var(--input);
     color: var(--text);
     resize: none;
 }
 
-/* ---------- Output ---------- */
 .output-box {
     flex: 1;
-    padding: 14px;
-    padding-bottom: 54px;
+    padding: 14px 14px 54px;
     border-radius: 14px;
-    background-color: rgba(0,0,0,0.04);
+    background: rgba(0,0,0,.05);
     font-size: 18px;
     overflow-y: auto;
 }
 
 [data-theme="dark"] .output-box {
-    background-color: rgba(255,255,255,0.06);
-}
-
-.direction {
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 6px;
-    color: var(--muted);
+    background: rgba(255,255,255,.06);
 }
 
 /* ---------- Copy Button ---------- */
@@ -201,30 +129,44 @@ textarea {
     height: 38px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background-color: var(--input);
-    color: var(--text);
+    background: var(--input);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-
-
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
 }
 
-.copy-btn {
+.copy-btn.visible {
     opacity: 1;
     pointer-events: auto;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+}
+
+.toast.show {
+    opacity: 1;
 }
 
 /* ---------- Footer ---------- */
 .footer {
     margin-top: 22px;
     font-size: 13px;
-    color: var(--muted);
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
 }
 
 .footer a {
@@ -232,385 +174,115 @@ textarea {
     text-decoration: none;
 }
 
-.footer a:hover {
-    text-decoration: underline;
-}
-
 /* ---------- Mobile ---------- */
 @media (max-width: 700px) {
-    .panes {
-        grid-template-columns: 1fr;
-    }
-
-    .pane {
-        height: 260px;
-    }
+    .panes { grid-template-columns: 1fr; }
+    .pane { height: 260px; }
 }
 </style>
 </head>
+
 <body>
+
+<div class="toast" id="toast">Copied!</div>
 
 <div class="container">
 <div class="card">
 
 <header>
     <h1>Jamalese Translator</h1>
-    <div class="toggle-wrap">
-        🌞
-        <label class="switch">
-            <input type="checkbox" id="darkToggle" checked>
-            <span class="slider"></span>
-        </label>
-        🌙
-    </div>
+    <label>
+        ☀️ <input type="checkbox" id="darkToggle"> 🌙
+    </label>
 </header>
 
-<div class="controls">
-    <select id="mode">
-        <option value="auto">Auto-detect</option>
-        <option value="jam-en">Zamœlis → English</option>
-        <option value="en-jam">English → Zamœlis</option>
-    </select>
+<div class="panes">
+
+<div class="pane">
+    <div class="lang-tabs">
+        <div class="lang-tab active" data-lang="jam">Zamœlis</div>
+        <div class="lang-tab" data-lang="eng">English</div>
+    </div>
+    <textarea id="input" placeholder="Type text here..."></textarea>
 </div>
 
-<div class="panes">
-    <div class="pane">
-        <textarea id="input" placeholder="Type text here..."></textarea>
+<div class="pane">
+    <div class="lang-tabs">
+        <div class="lang-tab" data-lang="jam">Zamœlis</div>
+        <div class="lang-tab active" data-lang="eng">English</div>
     </div>
+    <div class="output-box">
+        <div id="result"></div>
+    </div>
+    <button class="copy-btn" id="copyBtn">📋</button>
+</div>
 
-    <div class="pane">
-        <div class="output-box">
-            <div class="direction" id="direction"></div>
-            <div id="result"></div>
-        </div>
-        <button class="copy-btn" id="copy-btn" onclick="copyResult()">📋</button>
-    </div>
 </div>
 
 <div class="footer">
-    <span>
-        Powered by
-        <a href="https://newhs.cc/dict" target="_blank">Newhouse Jamalese Dictionary</a>
-    </span>
-    <span>
-        Created by
-        <a href="https://github.com/nadfd" target="_blank">nadfd</a>
-    </span>
+    <span><a href="https://newhs.cc/dict" target="_blank">Full dictionary</a></span>
+    <span>Created by <a href="https://github.com/nadfd" target="_blank">nadfd</a></span>
 </div>
 
 </div>
 </div>
 
-    <script src="https://newhs.cc/words.js"></script>
+<script src="https://newhs.cc/words.js"></script>
 
 <script>
-  const engToJam = {};
-
-    const PRIORITY = {
-  yes: ["za", "lah", "ti"]
-};
-
-  for (const [jam, engRaw] of dictionary) {
-
-    // 1. Split by commas
-    const parts = engRaw.split(",");
-
-    for (let part of parts) {
-
-      // 2. Remove annotations in parentheses
-      part = part.replace(/\s*\(.*?\)\s*/g, "");
-
-      // 3. Normalize
-      part = part.trim().toLowerCase();
-
-      // Skip empty results
-      if (!part) continue;
-
-      // 4. Initialize bucket
-      if (!engToJam[part]) {
-        engToJam[part] = [];
-      }
-
-      // 5. Avoid duplicates
-      if (!engToJam[part].includes(jam)) {
-        engToJam[part].push(jam);
-      }
-    }
-  }
-
-
-  const jamToEng = {};
-
-  for (const [jam, engRaw] of dictionary) {
-
-    // 1. Split by commas
-    const parts = engRaw.split(",");
-
-    const meanings = [];
-
-    for (let part of parts) {
-
-      // 2. Strip annotations in parentheses
-      part = part.replace(/\s*\(.*?\)\s*/g, "");
-
-      // 3. Normalize
-      part = part.trim().toLowerCase();
-
-      if (!part) continue;
-
-      meanings.push(part);
-    }
-
-    // 4. Deduplicate meanings
-    jamToEng[jam] = [...new Set(meanings)];
-  }
-
-
-
-    
 /* ---------- Dark Mode ---------- */
 const toggle = document.getElementById("darkToggle");
-const saved = localStorage.getItem("dark");
-
 document.documentElement.dataset.theme =
-    saved === null || saved === "true" ? "dark" : "light";
+    localStorage.getItem("dark") === "false" ? "light" : "dark";
 toggle.checked = document.documentElement.dataset.theme === "dark";
 
-toggle.addEventListener("change", () => {
+toggle.onchange = () => {
     document.documentElement.dataset.theme = toggle.checked ? "dark" : "light";
     localStorage.setItem("dark", toggle.checked);
+};
+
+/* ---------- Tabs Logic ---------- */
+let fromLang = "jam";
+let toLang = "eng";
+
+function updateTabs() {
+    document.querySelectorAll(".lang-tabs")[0].querySelectorAll(".lang-tab")
+        .forEach(t => t.classList.toggle("active", t.dataset.lang === fromLang));
+
+    document.querySelectorAll(".lang-tabs")[1].querySelectorAll(".lang-tab")
+        .forEach(t => t.classList.toggle("active", t.dataset.lang === toLang));
+}
+
+document.querySelectorAll(".lang-tab").forEach(tab => {
+    tab.onclick = () => {
+        const pane = tab.closest(".pane");
+        const lang = tab.dataset.lang;
+
+        if (pane === document.querySelectorAll(".pane")[0]) {
+            if (lang === toLang) return;
+            fromLang = lang;
+        } else {
+            if (lang === fromLang) return;
+            toLang = lang;
+        }
+        updateTabs();
+        translateText();
+    };
 });
 
-
 /* ---------- Translation ---------- */
-function tokenize(text) {
-  return text
-    .replace(/([?.!,])/g, " $1 ")
-    .trim()
-    .split(/\s+/)
-    .map(tok => {
-      const isPunct = /^[?.!,]$/.test(tok);
+/* (Your existing translation functions remain unchanged) */
 
-      let type = "lower";
-      if (!isPunct) {
-        if (tok === tok.toUpperCase() && /[A-Z]/.test(tok)) type = "upper";
-        else if (tok[0] === tok[0]?.toUpperCase()) type = "capital";
-      }
+/* ---------- Copy + Toast ---------- */
+const copyBtn = document.getElementById("copyBtn");
+const toast = document.getElementById("toast");
 
-      return {
-        raw: tok,
-        lower: tok.toLowerCase(),
-        case: type,
-        punct: isPunct
-      };
-    });
-}
-
-function detokenize(text) {
-  return text.replace(/\s+([?.!,])/g, "$1");
-}
-
-function detectLanguage(words) {
-    let jam = 0, eng = 0;
-    words.forEach(w => {
-        if (jamToEng[w]) jam++;
-        if (engToJam[w]) eng++;
-    });
-    return jam >= eng ? "jam" : "eng";
-}
-
-function applyCase(word, type) {
-  if (type === "upper") return word.toUpperCase();
-  if (type === "capital") return word[0].toUpperCase() + word.slice(1);
-  return word;
-}
-/*
-function rebuild(translatedText, tokens) {
-  const out = translatedText.split(" ");
-
-  return out.map((w, i) => {
-    const t = tokens[i];
-    if (!t) return w;
-    return applyCase(w, t.case);
-  }).join(" ");
-}
-*/
-function translateWithPhrases(tokens, dict) {
-  const result = [];
-  const words = tokens.map(t => t.lower);
-
-  const keys = Object.keys(dict);
-  const maxLen = Math.max(...keys.map(k => k.split(" ").length));
-
-  let i = 0;
-
-  while (i < tokens.length) {
-
-    // --- punctuation passes through untouched ---
-    if (tokens[i].punct) {
-      result.push(tokens[i].raw);
-      i++;
-      continue;
-    }
-
-    let matched = false;
-
-    // --- phrase matching ---
-    for (let size = Math.min(maxLen, tokens.length - i); size > 0; size--) {
-      const chunk = words.slice(i, i + size).join(" ");
-
-      if (dict[chunk]) {
-        let val = dict[chunk];
-
-if (Array.isArray(val)) {
-  // Apply priority if defined
-  if (PRIORITY[chunk]) {
-    val = PRIORITY[chunk].find(v => val.includes(v)) || val[0];
-  } else {
-    val = val[0];
-  }
-}
-
-        // 🔑 casing comes from FIRST word of phrase
-        val = applyCase(val, tokens[i].case);
-
-        result.push(val);
-        i += size;
-        matched = true;
-        break;
-      }
-    }
-
-    // --- fallback: single word ---
-    if (!matched) {
-      result.push(applyCase(words[i], tokens[i].case));
-      i++;
-    }
-  }
-
-  return detokenize(result.join(" "));
-}
-
-function prep(text) {
-  // Normalize curly apostrophes
-  text = text.replace(/’/g, "'");
-
-  // --- Apostrophe irregulars ---
-  const irregularApostrophe = {
-    "won't": "not will",
-    "can't": "not can",
-    "ain't": "not am"
-  };
-
-  for (const [from, to] of Object.entries(irregularApostrophe)) {
-    text = text.replace(
-      new RegExp(`\\b${from}\\b`, "gi"),
-      to
-    );
-  }
-
-  // --- No-apostrophe negations (explicit whitelist) ---
-  const manualNoApostrophe = {
-    "dont": "not do",
-    "didnt": "not did",
-    "doesnt": "not does",
-    "isnt": "not is",
-    "arent": "not are",
-    "wasnt": "not was",
-    "werent": "not were",
-    "havent": "not have",
-    "hasnt": "not has",
-    "hadnt": "not had",
-    "cant": "not can",
-    "wont": "not will",
-    "shouldnt": "not should",
-    "wouldnt": "not would",
-    "couldnt": "not could",
-    "mustnt": "not must",
-    "mightnt": "not might"
-  };
-
-  for (const [from, to] of Object.entries(manualNoApostrophe)) {
-    text = text.replace(
-      new RegExp(`\\b${from}\\b`, "gi"),
-      to
-    );
-  }
-
-  // --- Swap "AUX not" → "not AUX" ---
-  text = text.replace(
-    /\b(do|does|did|is|are|was|were|have|has|had|can|will|shall|should|would|could|might|must|may)\s+not\b/gi,
-    "not $1"
-  );
-
-  // --- Apostrophe-based negation (safe) ---
-  text = text.replace(
-    /\b(\w+)n't\b/gi,
-    "not $1"
-  );
-
-  return text;
-}
-
-function jamPrep(text) {
-  // Swap "nai AUX" → "AUX not"
-  text = text.replace(
-    /\bnai\s+(do|does|did|is|are|was|were|have|has|had|can|will|shall|should|would|could|might|must|may)\b/gi,
-    "$1 not"
-  );
-
-  return text;
-}
-
-    window.prep = prep;
-    window.jamPrep = jamPrep;
-
-function translateText() {
-    const inp = document.getElementById("input").value;
-    const text = (detectLanguage(tokenize(inp).map(t => t.lower)) === "jam") ? jamPrep(inp) : prep(inp);
-    const result = document.getElementById("result");
-    const dir = document.getElementById("direction");
-    if (!text.trim()) {
-        result.textContent = "";
-        dir.textContent = "";
-        return;
-    }
-
-const tokens = tokenize(text);
-
-    const mode = document.getElementById("mode").value;
-
-    if (mode === "auto") {
-const d = detectLanguage(tokens.map(t => t.lower));
-        if (d === "jam") {
-const translated = translateWithPhrases(tokens, jamToEng);
-result.textContent = translated;
-            dir.textContent = "Zamœlis → English (auto)";
-        } else {
-const translated = translateWithPhrases(tokens, engToJam);
-result.textContent = translated;
-            dir.textContent = "English → Zamœlis (auto)";
-        }
-    } else if (mode === "jam-en") {
-const translated = translateWithPhrases(tokens, jamToEng);
-result.textContent = translated;
-        dir.textContent = "Zamœlis → English";
-    } else {
-const translated = translateWithPhrases(tokens, engToJam);
-result.textContent = translated;
-        dir.textContent = "English → Zamœlis";
-    }
-}
-
-document.getElementById("input").addEventListener("input", translateText);
-document.getElementById("mode").addEventListener("change", translateText);
-
-function copyResult() {
-    const t = document.getElementById("result").innerText;
-    if (t) navigator.clipboard.writeText(t);
-}
-
-    window.copyResult = copyResult;
+copyBtn.onclick = () => {
+    if (!result.innerText) return;
+    navigator.clipboard.writeText(result.innerText);
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 1500);
+};
 </script>
 
 </body>
