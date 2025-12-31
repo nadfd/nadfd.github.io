@@ -6,200 +6,204 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-:root {
-  --bg: #0b0e1a;
-  --card: #151a33;
-  --text: #f1f3ff;
-  --muted: #aab;
-  --accent: #7c8cff;
-  --border: #2b2f55;
-  --transition: 0.35s ease;
+:root{
+--bg:#f4f6fb;
+--card:#fff;
+--text:#111;
+--muted:#555;
+--accent:#4b5cff;
+--border:#d6d9ee;
+--input:#fff;
 }
 
-[data-theme="light"] {
-  --bg: #f4f6fb;
-  --card: #ffffff;
-  --text: #111;
-  --muted: #666;
-  --border: #ddd;
+[data-theme="dark"]{
+--bg:#070914;
+--card:#151a33;
+--text:#f1f3ff;
+--muted:#aab;
+--accent:#7c8cff;
+--border:#2b2f55;
+--input:#0e1228;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  transition: background var(--transition), color var(--transition);
+body{
+margin:0;
+font-family:system-ui,sans-serif;
+background:var(--bg);
+color:var(--text);
+transition:.4s;
 }
 
-.container {
-  max-width: 1100px;
-  margin: 50px auto;
-  padding: 20px;
+.container{max-width:1100px;margin:60px auto;padding:20px}
+.card{
+background:var(--card);
+border-radius:22px;
+padding:28px;
+box-shadow:0 30px 80px rgba(0,0,0,.35);
+transition:.4s;
+position:relative;
 }
 
-.card {
-  background: var(--card);
-  border-radius: 20px;
-  padding: 26px;
-  transition: background var(--transition);
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+h1{margin:0;font-size:28px;transition:.4s}
+
+/* ---------- Dark toggle ---------- */
+.toggle-wrap{display:flex;align-items:center;gap:8px;font-size:18px}
+.switch{
+width:52px;height:28px;border-radius:999px;
+background:#999;position:relative;cursor:pointer;
+transition:.3s;
+}
+.switch::after{
+content:"";width:22px;height:22px;border-radius:50%;
+background:white;position:absolute;top:3px;left:3px;
+transition:.3s;
+}
+[data-theme="dark"] .switch{background:var(--accent)}
+[data-theme="dark"] .switch::after{transform:translateX(24px)}
+
+/* ---------- Panes ---------- */
+.panes{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+position:relative;
 }
 
-h1 { margin: 0; font-size: 28px; }
-
-/* ---------- FIXED SWITCH ---------- */
-.toggle-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+@media(max-width:700px){
+.panes{
+grid-template-columns:1fr;
+}
 }
 
-.switch {
-  width: 50px;
-  height: 26px;
-  background: #555;
-  border-radius: 20px;
-  position: relative;
-  cursor: pointer;
-  transition: background var(--transition);
+/* ---------- Swap button ---------- */
+.swap-btn{
+position:absolute;
+top:48px; /* aligns with language bars */
+left:50%;
+transform:translateX(-50%);
+font-size:20px;
+cursor:pointer;
+background:none;
+border:none;
+color:var(--muted);
+opacity:.7;
+transition:.2s;
+z-index:5;
 }
 
-.switch::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: 50%;
-  top: 3px;
-  left: 3px;
-  transition: transform var(--transition);
+.swap-btn:hover{opacity:1}
+
+/* Mobile placement */
+@media(max-width:700px){
+.swap-btn{
+position:static;
+transform:none;
+margin:12px auto;
+order:2;
+}
 }
 
-/* DARK MODE (ON) */
-[data-theme="dark"] .switch {
-  background: var(--accent);
+/* ---------- Pane ---------- */
+.pane{display:flex;flex-direction:column}
+
+/* ---------- Language tabs ---------- */
+.lang-tabs{
+position:relative;
+display:flex;
+gap:20px;
+border-bottom:1px solid var(--border);
+margin-bottom:10px;
 }
 
-[data-theme="dark"] .switch::after {
-  transform: translateX(24px);
-}
-/* -------------------------------- */
-
-.panes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  position: relative;
+/* push ONLY right tabs on desktop */
+@media(min-width:701px){
+#targetTabs{padding-left:44px;}
 }
 
-@media (max-width: 700px) {
-  .panes { grid-template-columns: 1fr; }
+.lang-tab{
+padding:8px 0;
+cursor:pointer;
+color:var(--muted);
+transition:.25s;
+white-space:nowrap;
 }
 
-.swap-btn {
-  position: absolute;
-  top: 42px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: var(--muted);
+.lang-tab span{display:inline-block}
+.lang-tab.active{color:var(--accent)}
+
+.underline{
+position:absolute;
+bottom:-1px;
+height:2px;
+background:var(--accent);
+transition:left .3s,width .3s;
 }
 
-@media (max-width: 700px) {
-  .swap-btn {
-    top: auto;
-    bottom: calc(50% + 10px);
-  }
+/* ---------- Input / Output ---------- */
+textarea{
+height:260px;
+resize:none;
+padding:14px;
+font-size:16px;
+border-radius:14px;
+border:1px solid var(--border);
+background:var(--input);
+color:var(--text);
+transition:.4s;
 }
 
-.lang-tabs {
-  position: relative;
-  display: flex;
-  gap: 18px;
-  margin-bottom: 8px;
+.output-box{
+position:relative;
+height:260px;
+padding:14px 14px 54px;
+border-radius:14px;
+background:rgba(0,0,0,.04);
+overflow-y:auto;
+font-size:18px;
+transition:.4s;
 }
+[data-theme="dark"] .output-box{background:rgba(255,255,255,.06)}
 
-.lang-tab {
-  cursor: pointer;
-  color: var(--muted);
-  padding-bottom: 6px;
+/* ---------- Copy ---------- */
+.copy-btn{
+position:absolute;
+bottom:10px;
+left:10px;
+display:flex;
+align-items:center;
+gap:6px;
+padding:6px 10px;
+border-radius:10px;
+border:1px solid var(--border);
+background:var(--input);
+cursor:pointer;
+font-size:14px;
+opacity:0;
+pointer-events:none;
+transition:.25s;
 }
+.copy-btn.visible{opacity:1;pointer-events:auto}
+.copy-btn.copied{pointer-events:none;color:var(--accent);border-color:var(--accent)}
 
-.lang-tab.active {
-  color: var(--text);
+/* ---------- Footer ---------- */
+.footer{
+margin-top:22px;
+font-size:13px;
+color:var(--muted);
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
 }
-
-.underline {
-  position: absolute;
-  bottom: 0;
-  height: 2px;
-  background: var(--accent);
-  transition: var(--transition);
-}
-
-.pane {
-  display: flex;
-  flex-direction: column;
-  height: 260px;
-}
-
-textarea {
-  flex: 1;
-  resize: none;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  padding: 14px;
-  font-size: 16px;
-}
-
-.output-box {
-  flex: 1;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 14px;
-  position: relative;
-}
-
-#result { white-space: pre-wrap; }
-
-.copy-btn {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--muted);
-  display: none;
-}
-
-.copy-btn.visible { display: block; }
-.copy-btn.copied { color: var(--accent); cursor: default; }
-
-.footer {
-  margin-top: 20px;
-  font-size: 13px;
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-}
-
-.footer a { color: var(--accent); text-decoration: none; }
+.footer a{color:var(--accent);text-decoration:none}
 </style>
 </head>
 
@@ -215,30 +219,31 @@ textarea {
 </header>
 
 <div class="panes">
+
 <button class="swap-btn" id="swapBtn">⇄</button>
 
-<div class="pane">
+<div class="pane" style="order:1">
 <div class="lang-tabs" id="sourceTabs">
 <div class="lang-tab active" data-lang="auto"><span>Auto</span></div>
 <div class="lang-tab" data-lang="jam"><span>Zamœlis</span></div>
 <div class="lang-tab" data-lang="eng"><span>English</span></div>
 <div class="underline"></div>
 </div>
-<textarea id="input"></textarea>
+<textarea id="input" placeholder="Type text here..."></textarea>
 </div>
 
-<div class="pane">
+<div class="pane" style="order:3">
 <div class="lang-tabs" id="targetTabs">
 <div class="lang-tab active" data-lang="eng"><span>English</span></div>
 <div class="lang-tab" data-lang="jam"><span>Zamœlis</span></div>
 <div class="underline"></div>
 </div>
-
 <div class="output-box">
 <div id="result"></div>
 <button class="copy-btn" id="copyBtn">📋 Copy</button>
 </div>
 </div>
+
 </div>
 
 <div class="footer">
@@ -250,131 +255,135 @@ textarea {
 </div>
 
 <script src="https://newhs.cc/words.js"></script>
+
 <script>
-/* ---------- FIXED THEME LOGIC ---------- */
-const themeSwitch = document.getElementById("themeSwitch");
-const savedTheme = localStorage.getItem("theme") || "dark";
-
-document.documentElement.dataset.theme = savedTheme;
-
-themeSwitch.onclick = () => {
-  const next =
-    document.documentElement.dataset.theme === "dark"
-      ? "light"
-      : "dark";
-  document.documentElement.dataset.theme = next;
-  localStorage.setItem("theme", next);
-};
-/* ------------------------------------- */
-
-/* ----- translation logic untouched ----- */
+/* ---------- Dictionary ---------- */
 const engToJam={}, jamToEng={};
-for(const [j,e] of dictionary){
-  const parts=e.split(",").map(p=>p.replace(/\(.*?\)/g,"").trim().toLowerCase()).filter(Boolean);
-  jamToEng[j]=parts;
-  parts.forEach(p=>{
-    engToJam[p]??=[];
-    if(!engToJam[p].includes(j)) engToJam[p].push(j);
-  });
+for(const [jam,engRaw] of dictionary){
+const parts=engRaw.split(",");
+const meanings=[];
+for(let p of parts){
+p=p.replace(/\s*\(.*?\)\s*/g,"").trim().toLowerCase();
+if(!p)continue;
+meanings.push(p);
+if(!engToJam[p])engToJam[p]=[];
+if(!engToJam[p].includes(jam))engToJam[p].push(jam);
+}
+jamToEng[jam]=meanings;
+}
+
+/* ---------- Theme ---------- */
+const themeSwitch=document.getElementById("themeSwitch");
+document.documentElement.dataset.theme=
+localStorage.getItem("dark")==="false"?"light":"dark";
+themeSwitch.onclick=()=>{
+const d=document.documentElement.dataset.theme!=="dark";
+document.documentElement.dataset.theme=d?"dark":"light";
+localStorage.setItem("dark",d);
+};
+
+/* ---------- Tabs ---------- */
+function refreshUnderline(container){
+const a=container.querySelector(".lang-tab.active span");
+const u=container.querySelector(".underline");
+u.style.width=a.offsetWidth+"px";
+u.style.left=a.offsetLeft+"px";
 }
 
 let source="auto", target="eng";
 
-function refreshUnderline(c){
-  const a=c.querySelector(".lang-tab.active span");
-  const u=c.querySelector(".underline");
-  if(!a) return;
-  u.style.width=a.offsetWidth+"px";
-  u.style.left=a.offsetLeft+"px";
+function setLang(isSource, lang){
+if(isSource){
+source=lang;
+if(lang!=="auto" && lang===target){
+target=lang==="eng"?"jam":"eng";
+activateTab("targetTabs",target);
+}
+}else{
+target=lang;
+if(source!=="auto" && lang===source){
+source=lang==="eng"?"jam":"eng";
+activateTab("sourceTabs",source);
+}
+}
+translate();
 }
 
-function activate(id,lang){
-  const c=document.getElementById(id);
-  c.querySelectorAll(".lang-tab").forEach(t=>{
-    t.classList.toggle("active",t.dataset.lang===lang);
-  });
-  refreshUnderline(c);
-}
-
-function setLang(isSource,lang){
-  if(isSource){
-    source=lang;
-    activate("sourceTabs",lang);
-    if(source!=="auto" && source===target){
-      target=source==="eng"?"jam":"eng";
-      activate("targetTabs",target);
-    }
-  } else {
-    target=lang;
-    activate("targetTabs",lang);
-    if(source!=="auto" && source===target){
-      source=target==="eng"?"jam":"eng";
-      activate("sourceTabs",source);
-    }
-  }
-  translate();
+function activateTab(id,lang){
+const c=document.getElementById(id);
+c.querySelectorAll(".lang-tab").forEach(t=>{
+t.classList.toggle("active",t.dataset.lang===lang);
+});
+refreshUnderline(c);
 }
 
 document.querySelectorAll(".lang-tabs").forEach(c=>{
-  c.querySelectorAll(".lang-tab").forEach(t=>{
-    t.onclick=()=>setLang(c.id==="sourceTabs",t.dataset.lang);
-  });
-  refreshUnderline(c);
-  new ResizeObserver(()=>refreshUnderline(c)).observe(c);
+c.querySelectorAll(".lang-tab").forEach(t=>{
+t.onclick=()=>{
+const isSource=c.id==="sourceTabs";
+setLang(isSource,t.dataset.lang);
+activateTab(c.id,t.dataset.lang);
+};
+});
+refreshUnderline(c);
+new ResizeObserver(()=>refreshUnderline(c)).observe(c);
 });
 
+/* ---------- Swap ---------- */
 document.getElementById("swapBtn").onclick=()=>{
-  if(source==="auto") return;
-  [source,target]=[target,source];
-  activate("sourceTabs",source);
-  activate("targetTabs",target);
-  translate();
+if(source==="auto")return;
+[source,target]=[target,source];
+activateTab("sourceTabs",source);
+activateTab("targetTabs",target);
+translate();
 };
 
+/* ---------- Translate ---------- */
 const input=document.getElementById("input");
 const result=document.getElementById("result");
 const copyBtn=document.getElementById("copyBtn");
-const autoSpan=document.querySelector('[data-lang="auto"] span');
+const autoSpan=document.querySelector('#sourceTabs [data-lang="auto"] span');
 
-function detect(w){
-  let j=0,e=0;
-  w.forEach(x=>{if(jamToEng[x])j++;if(engToJam[x])e++;});
-  return j>=e?"jam":"eng";
+function detectLanguage(words){
+let j=0,e=0;
+words.forEach(w=>{if(jamToEng[w])j++;if(engToJam[w])e++});
+return j>=e?"jam":"eng";
 }
 
 function translate(){
-  const txt=input.value.trim();
-  if(!txt){
-    result.textContent="";
-    copyBtn.classList.remove("visible");
-    autoSpan.textContent="Auto";
-    refreshUnderline(document.getElementById("sourceTabs"));
-    return;
-  }
+const text=input.value.trim();
+if(!text){
+result.textContent="";
+copyBtn.classList.remove("visible");
+autoSpan.textContent="Auto";
+refreshUnderline(document.getElementById("sourceTabs"));
+return;
+}
 
-  const words=txt.toLowerCase().split(/\s+/);
-  const d=detect(words);
+const words=text.toLowerCase().split(/\s+/);
+const detected=detectLanguage(words);
 
-  if(source==="auto"){
-    autoSpan.textContent=(d==="eng"?"English":"Zamœlis")+" – Auto";
-    refreshUnderline(document.getElementById("sourceTabs"));
-  }
+if(source==="auto"){
+autoSpan.textContent=(detected==="eng"?"English":"Zamœlis")+" – Auto";
+refreshUnderline(document.getElementById("sourceTabs"));
+}
 
-  const dict=(source==="jam"||(source==="auto"&&d==="jam"))?jamToEng:engToJam;
-  result.textContent=words.map(w=>dict[w]?.[0]||w).join(" ");
-  copyBtn.classList.add("visible");
+const dict=(source==="jam"||(source==="auto"&&detected==="jam"))?jamToEng:engToJam;
+result.textContent=words.map(w=>dict[w]?.[0]||w).join(" ");
+copyBtn.classList.add("visible");
 }
 
 input.addEventListener("input",translate);
 
+/* ---------- Copy ---------- */
 copyBtn.onclick=()=>{
-  navigator.clipboard.writeText(result.textContent);
-  copyBtn.textContent="✔ Copied";
-  copyBtn.classList.add("copied");
-  setTimeout(()=>{
-    copyBtn.textContent="📋 Copy";
-    copyBtn.classList.remove("copied");
-  },1200);
+navigator.clipboard.writeText(result.textContent);
+copyBtn.classList.add("copied");
+copyBtn.textContent="✔ Copied";
+setTimeout(()=>{
+copyBtn.classList.remove("copied");
+copyBtn.textContent="📋 Copy";
+},1200);
 };
 </script>
 </body>
