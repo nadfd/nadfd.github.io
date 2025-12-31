@@ -44,6 +44,7 @@ body {
   background: var(--card);
   border-radius: 20px;
   padding: 26px;
+  transition: background var(--transition);
 }
 
 header {
@@ -55,6 +56,7 @@ header {
 
 h1 { margin: 0; font-size: 28px; }
 
+/* ---------- FIXED SWITCH ---------- */
 .toggle-wrap {
   display: flex;
   align-items: center;
@@ -68,6 +70,7 @@ h1 { margin: 0; font-size: 28px; }
   border-radius: 20px;
   position: relative;
   cursor: pointer;
+  transition: background var(--transition);
 }
 
 .switch::after {
@@ -79,12 +82,18 @@ h1 { margin: 0; font-size: 28px; }
   border-radius: 50%;
   top: 3px;
   left: 3px;
-  transition: var(--transition);
+  transition: transform var(--transition);
 }
 
-[data-theme="light"] .switch::after {
+/* DARK MODE (ON) */
+[data-theme="dark"] .switch {
+  background: var(--accent);
+}
+
+[data-theme="dark"] .switch::after {
   transform: translateX(24px);
 }
+/* -------------------------------- */
 
 .panes {
   display: grid;
@@ -242,6 +251,23 @@ textarea {
 
 <script src="https://newhs.cc/words.js"></script>
 <script>
+/* ---------- FIXED THEME LOGIC ---------- */
+const themeSwitch = document.getElementById("themeSwitch");
+const savedTheme = localStorage.getItem("theme") || "dark";
+
+document.documentElement.dataset.theme = savedTheme;
+
+themeSwitch.onclick = () => {
+  const next =
+    document.documentElement.dataset.theme === "dark"
+      ? "light"
+      : "dark";
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem("theme", next);
+};
+/* ------------------------------------- */
+
+/* ----- translation logic untouched ----- */
 const engToJam={}, jamToEng={};
 for(const [j,e] of dictionary){
   const parts=e.split(",").map(p=>p.replace(/\(.*?\)/g,"").trim().toLowerCase()).filter(Boolean);
@@ -251,14 +277,6 @@ for(const [j,e] of dictionary){
     if(!engToJam[p].includes(j)) engToJam[p].push(j);
   });
 }
-
-const themeSwitch=document.getElementById("themeSwitch");
-document.documentElement.dataset.theme=localStorage.getItem("dark")==="false"?"light":"dark";
-themeSwitch.onclick=()=>{
-  const d=document.documentElement.dataset.theme!=="dark";
-  document.documentElement.dataset.theme=d?"dark":"light";
-  localStorage.setItem("dark",d);
-};
 
 let source="auto", target="eng";
 
@@ -281,14 +299,14 @@ function activate(id,lang){
 function setLang(isSource,lang){
   if(isSource){
     source=lang;
-    activate("sourceTabs",lang);   // ✅ FIX
+    activate("sourceTabs",lang);
     if(source!=="auto" && source===target){
       target=source==="eng"?"jam":"eng";
       activate("targetTabs",target);
     }
   } else {
     target=lang;
-    activate("targetTabs",lang);   // ✅ FIX
+    activate("targetTabs",lang);
     if(source!=="auto" && source===target){
       source=target==="eng"?"jam":"eng";
       activate("sourceTabs",source);
