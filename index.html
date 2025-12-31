@@ -6,13 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-* { box-sizing: border-box; }
+* { box-sizing:border-box; }
 
 :root {
   --bg:#f4f6fb;
   --card:#ffffff;
-  --text:#111111;
-  --muted:#555;
+  --text:#111;
+  --muted:#666;
   --accent:#4b5cff;
   --border:#d6d9ee;
   --input:#ffffff;
@@ -30,12 +30,10 @@
 
 body {
   margin:0;
-  font-family:system-ui, sans-serif;
+  font-family:system-ui,sans-serif;
   background:var(--bg);
   color:var(--text);
-  transition:
-    background-color .4s ease,
-    color .4s ease;
+  transition:background-color .4s,color .4s;
 }
 
 .container {
@@ -46,115 +44,138 @@ body {
 
 .card {
   background:var(--card);
-  border-radius:20px;
+  border-radius:22px;
   padding:28px;
   box-shadow:0 30px 80px rgba(0,0,0,.35);
-  transition:background-color .4s ease;
+  transition:background-color .4s;
 }
 
+/* ---------- Header ---------- */
 header {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:18px;
+  margin-bottom:20px;
 }
 
 h1 {
   margin:0;
   font-size:28px;
-  transition:color .4s ease;
+  transition:color .4s;
 }
 
-.toggle-wrap {
+/* ---------- Dark Toggle ---------- */
+.theme-toggle {
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:18px;
 }
 
-/* ---------- Language Tabs ---------- */
-.lang-tabs {
-  display:flex;
-  gap:18px;
-  border-bottom:1px solid var(--border);
-  margin-bottom:10px;
-}
-
-.lang-tab {
-  padding:8px 2px;
-  cursor:pointer;
-  color:var(--muted);
+.switch {
   position:relative;
-  transition:color .25s ease;
+  width:52px;
+  height:26px;
 }
 
-.lang-tab.active {
-  color:var(--accent);
+.switch input { display:none; }
+
+.slider {
+  position:absolute;
+  inset:0;
+  background:#bbb;
+  border-radius:30px;
+  transition:.4s;
 }
 
-.lang-tab.active::after {
+.slider::before {
   content:"";
   position:absolute;
-  left:0;
-  right:0;
-  bottom:-1px;
-  height:2px;
+  width:20px;
+  height:20px;
+  left:3px;
+  top:3px;
+  background:white;
+  border-radius:50%;
+  transition:.4s;
+}
+
+input:checked + .slider {
   background:var(--accent);
-  border-radius:2px;
+}
+
+input:checked + .slider::before {
+  transform:translateX(26px);
 }
 
 /* ---------- Panes ---------- */
 .panes {
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:16px;
+  gap:18px;
 }
 
 .pane {
-  position:relative;
   display:flex;
   flex-direction:column;
-  height:320px;
+  height:340px;
 }
 
+/* ---------- Tabs ---------- */
+.tabs {
+  position:relative;
+  display:flex;
+  gap:22px;
+  margin-bottom:8px;
+}
+
+.tab {
+  cursor:pointer;
+  color:var(--muted);
+  padding:6px 2px;
+  transition:color .25s;
+}
+
+.tab.active {
+  color:var(--accent);
+}
+
+.underline {
+  position:absolute;
+  bottom:0;
+  height:2px;
+  background:var(--accent);
+  border-radius:2px;
+  transition:.3s ease;
+}
+
+/* ---------- Text Areas ---------- */
 textarea {
   flex:1;
+  resize:none;
   padding:14px;
-  font-size:16px;
-  border-radius:14px;
+  border-radius:16px;
   border:1px solid var(--border);
   background:var(--input);
   color:var(--text);
-  resize:none;
-  transition:
-    background-color .4s ease,
-    color .4s ease,
-    border-color .4s ease;
+  font-size:16px;
+  transition:.4s;
 }
 
-.output-box {
+.output {
   flex:1;
   padding:14px 14px 56px;
-  border-radius:14px;
+  border-radius:16px;
   background:rgba(0,0,0,.04);
-  font-size:18px;
-  overflow-y:auto;
-  transition:background-color .4s ease;
+  transition:.4s;
+  overflow:auto;
 }
 
-[data-theme="dark"] .output-box {
+[data-theme="dark"] .output {
   background:rgba(255,255,255,.06);
 }
 
-.direction {
-  font-size:14px;
-  font-weight:bold;
-  margin-bottom:6px;
-  color:var(--muted);
-}
-
 /* ---------- Copy Button ---------- */
-.copy-btn {
+.copy {
   position:absolute;
   bottom:10px;
   left:10px;
@@ -165,43 +186,14 @@ textarea {
   background:var(--input);
   cursor:pointer;
   font-size:18px;
-
   opacity:0;
   pointer-events:none;
-  transition:
-    opacity .25s ease,
-    background-color .4s ease,
-    border-color .4s ease;
+  transition:.3s;
 }
 
-.copy-btn.visible {
+.copy.visible {
   opacity:1;
   pointer-events:auto;
-}
-
-/* ---------- Toast ---------- */
-.toast {
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--card);
-  color:var(--text);
-  padding:10px 16px;
-  border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
-  opacity:0;
-  pointer-events:none;
-  transition:
-    opacity .3s ease,
-    transform .3s ease,
-    background-color .4s ease,
-    color .4s ease;
-}
-
-.toast.show {
-  opacity:1;
-  transform:translateX(-50%) translateY(6px);
 }
 
 /* ---------- Footer ---------- */
@@ -218,7 +210,7 @@ textarea {
   text-decoration:none;
 }
 
-@media (max-width:700px) {
+@media (max-width:750px) {
   .panes { grid-template-columns:1fr; }
   .pane { height:260px; }
 }
@@ -227,126 +219,133 @@ textarea {
 
 <body>
 
-<div class="toast" id="toast">Copied!</div>
-
 <div class="container">
 <div class="card">
 
 <header>
   <h1>Jamalese Translator</h1>
-  <div class="toggle-wrap">
+  <div class="theme-toggle">
     ☀️
-    <input type="checkbox" id="darkToggle" checked>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle" checked>
+      <span class="slider"></span>
+    </label>
     🌙
   </div>
 </header>
 
-<!-- Source language tabs -->
-<div class="lang-tabs" id="sourceTabs">
-  <div class="lang-tab active" data-lang="auto">Auto</div>
-  <div class="lang-tab" data-lang="jam">Zamœlis</div>
-  <div class="lang-tab" data-lang="eng">English</div>
-</div>
-
-<!-- Target language tabs -->
-<div class="lang-tabs" id="targetTabs">
-  <div class="lang-tab active" data-lang="eng">English</div>
-  <div class="lang-tab" data-lang="jam">Zamœlis</div>
-</div>
-
 <div class="panes">
+  <!-- LEFT -->
   <div class="pane">
+    <div class="tabs" id="sourceTabs">
+      <div class="tab active" data-lang="auto">Auto</div>
+      <div class="tab" data-lang="jam">Zamœlis</div>
+      <div class="tab" data-lang="eng">English</div>
+      <div class="underline"></div>
+    </div>
     <textarea id="input" placeholder="Type text here..."></textarea>
   </div>
 
-  <div class="pane">
-    <div class="output-box">
-      <div class="direction" id="direction"></div>
-      <div id="result"></div>
+  <!-- RIGHT -->
+  <div class="pane" style="position:relative;">
+    <div class="tabs" id="targetTabs">
+      <div class="tab active" data-lang="eng">English</div>
+      <div class="tab" data-lang="jam">Zamœlis</div>
+      <div class="underline"></div>
     </div>
-    <button class="copy-btn" id="copyBtn">📋</button>
+    <div class="output" id="output"></div>
+    <button class="copy" id="copy">📋</button>
   </div>
 </div>
 
 <div class="footer">
   <span>View the full dictionary at <a href="https://newhs.cc/dict">newhs.cc/dict</a></span>
-  <span>Created by <a href="https://github.com/nadfd">nadfd</a></span>
+  <span>v1.0 · by <a href="https://github.com/nadfd">nadfd</a></span>
 </div>
 
 </div>
 </div>
 
+<!-- AUTO-UPDATING DICTIONARY -->
 <script src="https://newhs.cc/words.js"></script>
 
 <script>
-/* ---------- Dark Mode ---------- */
-const toggle = document.getElementById("darkToggle");
-document.documentElement.dataset.theme = toggle.checked ? "dark" : "light";
-toggle.onchange = () => {
-  document.documentElement.dataset.theme =
-    toggle.checked ? "dark" : "light";
-};
+/* ---------- Theme ---------- */
+const toggle=document.getElementById("themeToggle");
+document.documentElement.dataset.theme="dark";
+toggle.onchange=()=>document.documentElement.dataset.theme=
+  toggle.checked?"dark":"light";
 
-/* ---------- Language Tabs ---------- */
-let sourceLang = "auto";
-let targetLang = "eng";
+/* ---------- Tabs + underline ---------- */
+function setupTabs(el, onChange) {
+  const tabs=[...el.querySelectorAll(".tab")];
+  const line=el.querySelector(".underline");
 
-function bindTabs(container, isSource) {
-  container.querySelectorAll(".lang-tab").forEach(tab => {
-    tab.onclick = () => {
-      const lang = tab.dataset.lang;
-      if (isSource && lang === targetLang) return;
-      if (!isSource && lang === sourceLang) return;
-
-      container.querySelector(".active")?.classList.remove("active");
-      tab.classList.add("active");
-
-      if (isSource) sourceLang = lang;
-      else targetLang = lang;
-
-      translateText();
-    };
-  });
-}
-
-bindTabs(sourceTabs, true);
-bindTabs(targetTabs, false);
-
-/* ---------- Copy + Toast ---------- */
-const copyBtn = document.getElementById("copyBtn");
-const toast = document.getElementById("toast");
-
-copyBtn.onclick = () => {
-  navigator.clipboard.writeText(result.innerText);
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 1200);
-};
-
-/* ---------- Translation ---------- */
-const input = document.getElementById("input");
-const result = document.getElementById("result");
-const direction = document.getElementById("direction");
-
-function translateText() {
-  const text = input.value.trim();
-
-  if (!text) {
-    result.textContent = "";
-    direction.textContent = "";
-    copyBtn.classList.remove("visible");
-    return;
+  function move(tab){
+    line.style.width=tab.offsetWidth+"px";
+    line.style.left=tab.offsetLeft+"px";
   }
 
-  direction.textContent =
-    sourceLang.toUpperCase() + " → " + targetLang.toUpperCase();
+  tabs.forEach(t=>{
+    t.onclick=()=>{
+      tabs.forEach(x=>x.classList.remove("active"));
+      t.classList.add("active");
+      move(t);
+      onChange(t.dataset.lang);
+    };
+  });
 
-  /* Replace this with your real dictionary logic */
-  result.textContent = text;
-
-  copyBtn.classList.add("visible");
+  requestAnimationFrame(()=>move(el.querySelector(".active")));
 }
 
-input.addEventListener("input", translateText);
+let src="auto", tgt="eng";
+setupTabs(sourceTabs,l=>{src=l;translate();});
+setupTabs(targetTabs,l=>{tgt=l;translate();});
+
+/* ---------- Translation ---------- */
+const input=document.getElementById("input");
+const output=document.getElementById("output");
+const copy=document.getElementById("copy");
+
+function detectLang(text){
+  for (let w of text.split(/\s+/))
+    if (jamaleseToEnglish[w]) return "jam";
+  return "eng";
+}
+
+function translate(){
+  const text=input.value.trim();
+  if(!text){output.textContent="";copy.classList.remove("visible");return;}
+
+  let from=src==="auto"?detectLang(text):src;
+  let dict=from==="jam"?jamaleseToEnglish:englishToJamalese;
+
+  let words=text.split(/\s+/);
+  let res=[];
+  for(let i=0;i<words.length;i++){
+    let found=false;
+    for(let l=5;l>0;l--){
+      let phrase=words.slice(i,i+l).join(" ");
+      if(dict[phrase]){
+        res.push(dict[phrase]);
+        i+=l-1;
+        found=true;
+        break;
+      }
+    }
+    if(!found) res.push(words[i]);
+  }
+
+  output.textContent=res.join(" ");
+  copy.classList.add("visible");
+}
+
+input.addEventListener("input",translate);
+
+/* ---------- Copy ---------- */
+copy.onclick=()=>{
+  navigator.clipboard.writeText(output.textContent);
+};
 </script>
 
 </body>
