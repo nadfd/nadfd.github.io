@@ -203,6 +203,24 @@ grid-template-columns:1fr;
 gap:12px; /* 🔑 reduced gap */
 }
 }
+/* --- CRITICAL: allow selects to be clickable --- */
+
+/* decorative / overlay elements MUST NOT capture clicks */
+.swap-btn,
+.swap-wrapper,
+.tab-underline,
+.language-tabs::after,
+.language-tabs::before {
+  pointer-events: none;
+}
+
+/* actual interactive elements MUST accept clicks */
+.language-tabs select,
+.swap-btn button {
+  pointer-events: auto;
+  position: relative;
+  z-index: 5;
+}
 </style>
 </head>
 
