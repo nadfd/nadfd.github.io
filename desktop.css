@@ -1,0 +1,19 @@
+.panes {
+  grid-template-columns: 1fr 1fr;
+  height: 300px;
+}
+
+.input-pane,
+.output-pane {
+  height: 300px;
+}
+
+/* Push ONLY right language bar */
+.lang-bar.right {
+  margin-left: 28px;
+}
+
+/* Swap button centered between bars */
+.swap-btn {
+  margin-top: 4px;
+}
