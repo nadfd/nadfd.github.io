@@ -1,84 +1,112 @@
-/* ---------- Dark Mode ---------- */
-const toggle = document.getElementById("darkToggle");
-const root = document.documentElement;
+/* ===============================
+   GLOBAL STATE
+================================ */
+let leftLang = "auto";
+let rightLang = "jam";
+let autoDetected = null;
+let autoLocked = false;
 
-const saved = localStorage.getItem("theme") || "dark";
-root.dataset.theme = saved;
-toggle.checked = saved === "dark";
+/* ===============================
+   DOM
+================================ */
+const inputBox = document.getElementById("input");
+const resultBox = document.getElementById("result");
 
-toggle.addEventListener("change", () => {
-  root.dataset.theme = toggle.checked ? "dark" : "light";
-  localStorage.setItem("theme", root.dataset.theme);
+const leftTabs = document.querySelectorAll(".lang-left");
+const rightTabs = document.querySelectorAll(".lang-right");
+
+const leftAutoTab = document.getElementById("left-auto");
+
+/* ===============================
+   UTIL
+================================ */
+function tokenize(text) {
+  return text.toLowerCase().trim().split(/\s+/);
+}
+
+function detectLanguage(words) {
+  let jam = 0, eng = 0;
+  words.forEach(w => {
+    if (jamToEng[w]) jam++;
+    if (engToJam[w]) eng++;
+  });
+  return jam >= eng ? "jam" : "eng";
+}
+
+function setUnderline(group, active) {
+  group.forEach(t => {
+    t.classList.toggle("active", t.dataset.lang === active);
+  });
+}
+
+/* ===============================
+   LANGUAGE SELECTION
+================================ */
+leftTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    leftLang = tab.dataset.lang;
+    autoLocked = leftLang !== "auto";
+
+    setUnderline(leftTabs, leftLang);
+    translate();
+  });
 });
 
-/* ---------- Dictionary build (auto-updating) ---------- */
-const engToJam = {};
-const jamToEng = {};
+rightTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    rightLang = tab.dataset.lang;
 
-for (const [jam, engRaw] of dictionary) {
-  const parts = engRaw.split(",");
-  const clean = parts.map(p =>
-    p.replace(/\s*\(.*?\)/g, "").trim().toLowerCase()
-  ).filter(Boolean);
+    // Prevent duplicate languages
+    if (rightLang === leftLang && leftLang !== "auto") {
+      leftLang = rightLang === "eng" ? "jam" : "eng";
+      setUnderline(leftTabs, leftLang);
+    }
 
-  jamToEng[jam] = [...new Set(clean)];
-
-  clean.forEach(e => {
-    if (!engToJam[e]) engToJam[e] = [];
-    if (!engToJam[e].includes(jam)) engToJam[e].push(jam);
+    setUnderline(rightTabs, rightLang);
+    translate();
   });
-}
+});
 
-/* ---------- Translate ---------- */
-const input = document.getElementById("input");
-const result = document.getElementById("result");
-
-function tokenize(t) {
-  return t.toLowerCase().trim().split(/\s+/);
-}
-
-function detect(words) {
-  let j = 0, e = 0;
-  words.forEach(w => {
-    if (jamToEng[w]) j++;
-    if (engToJam[w]) e++;
-  });
-  return j >= e ? "jam" : "en";
-}
-
+/* ===============================
+   TRANSLATION
+================================ */
 function translate() {
-  const text = input.value.trim();
-  if (!text) {
-    result.textContent = "";
+  const text = inputBox.value;
+
+  if (!text.trim()) {
+    resultBox.textContent = "";
+    autoDetected = null;
+    autoLocked = false;
+
+    // Reset Auto label
+    leftAutoTab.textContent = "Auto";
+    setUnderline(leftTabs, leftLang);
     return;
   }
 
+  let source = leftLang;
+
+  if (leftLang === "auto") {
+    autoDetected = detectLanguage(tokenize(text));
+    source = autoDetected;
+
+    // Update Auto tab label ONLY if auto is selected
+    leftAutoTab.textContent =
+      (autoDetected === "eng" ? "English" : "Jamalese") + " – Auto";
+  }
+
+  setUnderline(leftTabs, leftLang);
+
   const words = tokenize(text);
-  const dir = detect(words);
 
-  const out = words.map(w =>
-    dir === "jam"
-      ? jamToEng[w]?.[0] || w
-      : engToJam[w]?.[0] || w
-  );
-
-  result.textContent = out.join(" ");
+  if (source === "eng") {
+    resultBox.textContent = translateWithPhrases(words, engToJam);
+  } else {
+    resultBox.textContent = translateWithPhrases(words, jamToEng);
+  }
 }
 
-input.addEventListener("input", translate);
-
-/* ---------- Copy ---------- */
-const copyBtn = document.getElementById("copyBtn");
-
-copyBtn.onclick = () => {
-  if (!result.textContent) return;
-
-  navigator.clipboard.writeText(result.textContent);
-  copyBtn.textContent = "✓ Copied";
-  copyBtn.disabled = true;
-
-  setTimeout(() => {
-    copyBtn.textContent = "📋";
-    copyBtn.disabled = false;
-  }, 1200);
-};
+/* ===============================
+   EVENTS
+================================ */
+inputBox.addEventListener("input", translate);
